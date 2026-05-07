@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goodbye Medan, Hello Malaysia! ✈️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Playfair+Display:wght@700&display=swap');
+
+        :root {
+            --pink-deep: #831843;
+            --pink-vibrant: #ec4899;
+            --pink-soft: #fce7f3;
+        }
+
+        /* 1. Background Heboh: Gradasi Bergerak */
+        body {
+            margin: 0; min-height: 100vh;
+            background: linear-gradient(-45deg, #4c0519, #9f1239, #db2777, #f472b6);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: 'Poppins', sans-serif;
+            color: white;
+            overflow-x: hidden; /* Scroll vertikal tetap aktif */
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 2. Dekorasi Permanen */
+        .bunting-top { position: fixed; top: 0; left: 0; width: 100%; height: 80px; z-index: 1000; pointer-events: none; }
+        .flower-fixed { position: fixed; font-size: 60px; z-index: 1001; pointer-events: none; opacity: 0.8; }
+
+        /* 3. SISTEM FOTO MELAYANG DI LATAR BELAKANG */
+        .floating-photo {
+            position: fixed; /* Menempel di layar saat di-scroll */
+            border: 3px solid rgba(255,255,255,0.5);
+            border-radius: 10px;
+            object-fit: cover;
+            width: 120px; height: 120px;
+            z-index: 1; /* Di BELAKANG kotak transparan */
+            opacity: 0.5; /* Agak transparan biar gak norak */
+            animation: floatAround linear infinite;
+        }
+        @keyframes floatAround {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-20vh) rotate(360deg); }
+        }
+
+        /* 4. Sistem Halaman (Transisi Smooth) */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 50px 0; /* Jarak atas bawah buat tali festa */
+        }
+        .hidden { opacity: 0; transform: scale(0.9) translateY(20px); pointer-events: none; }
+
+        /* 5. Kotak Transparan (Glassmorphism) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            border-radius: 40px;
+            text-align: center;
+            max-width: 650px;
+            width: 85%;
+            z-index: 10; /* Di DEPAN foto melayang */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            margin-top: 50px; /* Jarak dari tali pesta */
+        }
+
+        /* 6. Tombol-Tombol Meriah */
+        .btn-main {
+            background: white; color: var(--pink-deep);
+            padding: 18px 40px; border-radius: 50px;
+            border: none; cursor: pointer; font-weight: 700; font-size: 1.2rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 20px;
+        }
+        .btn-main:hover { transform: scale(1.1) translateY(-5px); }
+
+        .tab-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white; padding: 10px 20px; border-radius: 20px;
+            cursor: pointer; font-weight: 600; transition: 0.3s;
+            margin: 5px;
+        }
+        .tab-btn.active { background: white; color: #9f1239; }
+
+        /* 7. Grid 6 Foto (Di dalam kotak transparan) */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+        .photo-grid img {
+            width: 100%; height: 110px; object-fit: cover;
+            border-radius: 12px; border: 3px solid rgba(255,255,255,0.6);
+            transition: 0.3s;
+        }
+        .photo-grid img:hover { transform: scale(1.1) rotate(3deg); z-index: 10; }
+
+        /* 8. Slot Pesan & Harapan */
+        .content-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: left;
+            max-height: 250px; /* Batas tinggi biar bisa scroll di dalem */
+            overflow-y: auto; /* Scroll vertikal AKTIF di dalem sini */
+            display: none; /* Disembunyikan dulu */
+        }
+        .content-box.show { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Scrollbar Halus */
+        .content-box::-webkit-scrollbar { width: 8px; }
+        .content-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+    </style>
+</head>
+<body>
+
+    <script>
+        // Masukkan nama file foto disini
+        const photos = ['potomiror.jpeg', 'potoosis.jpeg', 'potoramen.jpeg', 'potomaulid.jpeg', 'potoultah1.jpeg', 'potoultah2.jpeg'];
+        
+        // Buat 12 foto melayang
+        for(let i=0; i<12; i++) {
+            let img = document.createElement('img');
+            // Pilih foto secara acak dari array 'photos'
+            img.src = photos[i % photos.length];
+            img.className = 'floating-photo';
+            
+            // Atur posisi acak dari kiri ke kanan (0vw sampai 90vw)
+            img.style.left = Math.random() * 90 + 'vw';
+            
+            // Atur durasi animasi acak (biar gak kompak melayangnya)
+            img.style.animationDuration = (Math.random() * 8 + 6) + 's';
+            
+            // Atur delay acak agar tidak muncul bersamaan
+            img.style.animationDelay = Math.random() * 5 + 's';
+            
+            document.body.appendChild(img);
+        }
+    </script>
+
+    <svg class="bunting-top" viewBox="0 0 1000 100">
+        <path d="M0,0 Q125,50 250,0 T500,0 T750,0 T1000,0" fill="none" stroke="white" stroke-width="3" stroke-dasharray="10,10"/>
+        <circle cx="125" cy="25" r="15" fill="#fbcfe8"/><circle cx="375" cy="25" r="15" fill="#fbcfe8"/><circle cx="625" cy="25" r="15" fill="#fbcfe8"/><circle cx="875" cy="25" r="15" fill="#fbcfe8"/>
+    </svg>
+    <div class="flower-fixed" style="top:15px; left:15px;">🌸</div>
+    <div class="flower-fixed" style="top:15px; right:15px;">🌸</div>
+    <div class="flower-fixed" style="bottom:15px; left:15px;">🌺</div>
+    <div class="flower-fixed" style="bottom:15px; right:15px;">🌺</div>
+
+    <div id="page1" class="page">
+        <div class="glass-card">
+            <h1 style="font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 10px;">Bon Voyage! ✈️</h1>
+            <p>Sebuah kejutan spesial dari kita di Potobrut (anjay) untuk perjalanan baru kau ke Malaysia eaa slebew.</p>
+            <button class="btn-main" onclick="goToPage2()">Buka Kejutan Sekarang</button>
+        </div>
+    </div>
+
+    <div id="page2" class="page hidden">
+        <div class="glass-card">
+            <h2 style="font-family: 'Playfair Display'; margin-bottom: 20px;">To Our Best Friend</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <button class="tab-btn active" onclick="showTab('pesan', this)">Pesan</button>
+                <button class="tab-btn" onclick="showTab('harapan', this)">Harapan</button>
+            </div>
+            
+            <div class="photo-grid">
+                <img src="potoosis.jpeg"> <img src="potoramen.jpeg"> <img src="potoultah1.jpeg">
+                <img src="potomiror.jpeg"> <img src="potomaulid.jpeg"> <img src="potoultah2.jpeg">
+            </div>
+
+            <div id="pesan" class="content-box show">
+                <p><strong>to: cinta impor orang kaya,</strong><br><br>
+                 <p>dek, makasii kali yaa untukk ±2 tahunnya sama kamii, dan sekarang pas tau kau harus nerima takdirmu untuk lanjut di malaysia, kami rasanya gatauu mauu ikutt senengg atauu sedii.. senengg karenaa bisa ngeliatt kau ga egois sama diri sendirii, bisaa ke tahap lingkungann yang baruu, kumpulll sama keluargaa lengkapp, jujurr ituu buat kami senenggg kaliii.. tapii sedii karena tau bakall banyak sesuatu yangg beda disanaa maupunn disiniii, kita ga bakalan main sesering biasanya, even mau ketemuu aja atau papas papasan dijalann gabisaa, bakall kangenn kangennnnn kalii sama suasana kecill yang mungkin selamaa ini keliatannya biasaa ajaa.. </p>
+
+<p>kami cuma mau ngasii tau ke kauu kaloo selamaa 2 tahunn inii, kau ituu berartiii kalii dekk, kaloo ga gegaraa kauu, kitaa semuaa gabakall bisaa jadi circle, diliatt darii perdi duluu pendiemmm kalii, apalagii dapaa. kalo bukan kau yang satui siapaa lagii??.. mungkinn kamii jarangg ngomongg langsungg, tapii banyaakkkkkk kaliii hari yang kamii lewatii tuhh rasanyaa jauhh jauhh jauhhh lebii ringann gegara kauu, darii asbun kauu yangg kadang gabisa dicerna, jokes yang ga lucu tapi lucu, tapii mungkinn kau ga sadarr kaloo hal sekecill ituu bisaa buatt orangg lupaa dengan masalahnyaa. Dan menurut kamii gaa semua orangg bisa setuluss itu bertemann selamaa itu tanpa bosenn.</p>
+
+<p>oiyaa satuu lagii, jangann pernaa takutt kalauu nantii semuanyaa berubah yaa? mungkin emangg ga bakalann bisa ketemu kea biasanyaa, kalopunn nantii kitaa semuaa udaa sibukk masingg masingg, ituu tetepp kamii yaa, dirii kamii yangg kau kenall bakall tetapp ada kokk, karenaa juga some people change for the better, grubb kitaa jugaa bakall ga seramee biasanyaa, tapii bakalann tetapp adaa komunikasiii kecill. Dan kau jugaa mau sejauhh apapunn tempatnyaa, kamii harapp tetepp jadii Cinta yang kamii kenall, mauu sama siapa punn disanaa. Makasii yaa udaa jadii bagiann darii 2 tahun yangg gaakan perna bisa dilupainn. Hati hatii di jalann menuju hidupp barumu dekk, semogaa malaysia nerimaa versi terbaik darii dirimuu🤍</p><br><br>
+                
+            </div>
+
+            <div id="harapan" class="content-box">
+                <h3 style="margin-top:0; color:#fce7f3;">Harapan & Doa</h3>
+                <p>Kami harap, sejauh apapun nanti kau pergii, semoga kau ketemu banyakkk hal baik disanaa. ketemu orang orang yang tulussnyaa sama keaa kauu, lingkungan yang bikinn kau berkembangg, dan pengalaman yang bisa ngerubah kauu jadi versi yang jauhh lebih baik lagii. some people change for the better, dan kamii harap malaysia nanti jadii salah satu tempat yang bikin kauu makinn bahagia, makin kuattt, dan makin nemuin diri kauu sendiriii 🤍<br><br>
+                
+            </div>
+            
+            <br>
+            <button class="tab-btn" onclick="location.reload()" style="background:none; border:1px solid white; color:white; margin-top:20px;">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Logika Transisi Halaman
+        function goToPage2() {
+            document.getElementById('page1').classList.add('hidden');
+            setTimeout(() => {
+                document.getElementById('page1').style.display = 'none'; // Hapus halaman 1
+                document.getElementById('page2').classList.remove('hidden'); // Tampilkan halaman 2
+            }, 800); // Harus sama dengan durasi transisi di CSS
+        }
+
+        // Logika Tab (Tombol Pesan/Harapan)
+        function showTab(id, btn) {
+            // Sembunyikan semua konten box
+            document.querySelectorAll('.content-box').forEach(box => box.classList.remove('show'));
+            // Hapus status aktif dari semua tombol
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            // Tampilkan konten yang dipilih & aktifkan tombolnya
+            document.getElementById(id).classList.add('show');
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
